@@ -1,0 +1,2 @@
+python train_hr_baseline.py
+python test_hr_baseline.py

@@ -1,0 +1,2 @@
+python train_hr_baseline_finetune.py
+python test_hr_baseline_finetune.py
