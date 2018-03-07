@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 
-pip uninstall guided-filter
-rm -rf build
-rm -rf dist
-rm -rf guided_filter.egg-info/
+pip uninstall guided_filter_pytorch
+rm -rf guided_filter_pytorch.egg-info/
