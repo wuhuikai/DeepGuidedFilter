@@ -1,6 +1,6 @@
 # PyCharm
-.idea
+.idea/
 
 # Python
-__pycache__
-*.egg-info
+__pycache__/
+*.egg-info/

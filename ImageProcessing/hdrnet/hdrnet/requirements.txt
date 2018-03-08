@@ -1,7 +1,0 @@
-setproctitle
-numpy
-pyglib
-scikit_image
-tensorflow_gpu
-python_gflags
-python_magic

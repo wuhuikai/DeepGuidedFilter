@@ -1,0 +1,1 @@
+wget -O- http://groups.csail.mit.edu/graphics/fivek_dataset/ | sed -n 's/.*\([id][mn][g]\/[^"]*\.[td][in][fg]\).*/\1/p' | sed -n '/tiff16_'$1'/p'  | sed -e 's#^#http://groups.csail.mit.edu/graphics/fivek_dataset/#'  | head -999999999999 > img_list_$1.csv
