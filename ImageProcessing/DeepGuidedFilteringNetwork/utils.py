@@ -48,7 +48,3 @@ def calc_metric_per_img(im_name, pre_path, gt_path, opts={}):
 def calc_metric(pre_path, gt_path, n_process=8):
     params = [(im_name, pre_path, gt_path) for im_name in os.listdir(pre_path)]
     return np.asarray(Pool(n_process).starmap(calc_metric_per_img, params))
-
-def task_name():
-    with open('TASK_NAME') as f:
-        return f.readline().strip()

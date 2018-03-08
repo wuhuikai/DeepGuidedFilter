@@ -59,8 +59,7 @@ class Compose(object):
         return imgs
 
 class SuDataset(data.Dataset):
-    def __init__(self, root, list_path, low_size=64, fine_size=-1, #flip=True, rotate=True,
-                                    loader=default_loader):
+    def __init__(self, root, list_path, low_size=64, fine_size=-1, loader=default_loader):
         super(SuDataset, self).__init__()
 
         with open(list_path) as f:
@@ -77,10 +76,6 @@ class SuDataset(data.Dataset):
 
         self.transform = Compose([
                              RandomCrop(fine_size) if fine_size > 0 else None,
-                             # Transforms(transforms.Scale(fine_size)) if fine_size > 0 else None,
-                             # RandomTransforms(transforms.hflip) if flip else None,
-                             # RandomTransforms(transforms.vflip) if flip else None,
-                             # RandomRotate() if rotate else None,
                              transforms.Lambda(append),
                              Transforms(transforms.ToTensor())
                          ])
@@ -93,6 +88,38 @@ class SuDataset(data.Dataset):
         imgs = [self.loader(path) for path in self.imgs[index]]
 
         # input_img, gt_img, low_res_input_img, low_res_gt_img
+        if self.transform is not None:
+            imgs = self.transform(imgs)
+
+        return imgs
+
+    def __len__(self):
+        return len(self.imgs)
+
+class PreSuDataset(data.Dataset):
+    def __init__(self, img_list, low_size=64, loader=default_loader):
+        super(PreSuDataset, self).__init__()
+
+        self.imgs = list(img_list)
+        self.loader = loader
+
+        def append(imgs):
+            imgs.append(transforms.resize(imgs[0], low_size, interpolation=Image.NEAREST))
+            return imgs
+
+        self.transform = Compose([
+                             transforms.Lambda(append),
+                             Transforms(transforms.ToTensor())
+                         ])
+
+    def get_path(self, idx):
+        return self.imgs[idx]
+
+    def __getitem__(self, index):
+        # input_img
+        imgs = [self.loader(self.imgs[index])]
+
+        # input_img, low_res_input_img
         if self.transform is not None:
             imgs = self.transform(imgs)
 

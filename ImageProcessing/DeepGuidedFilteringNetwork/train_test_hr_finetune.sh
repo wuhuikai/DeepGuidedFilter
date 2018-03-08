@@ -1,2 +1,0 @@
-python train_hr_finetune.py
-python test_hr_finetune.py

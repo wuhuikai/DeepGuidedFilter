@@ -8,13 +8,13 @@ from torch import optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
-from utils import Config, task_name
+from utils import Config
 from dataset import SuDataset
 from vis_utils import VisUtils
 
 
 default_config = Config(
-    TASK = task_name(),
+    TASK = None,
     NAME = 'LR',
     N_START = 0,
     N_EPOCH = 150,
@@ -43,17 +43,19 @@ default_config = Config(
 )
 
 def run(config, keep_vis=False):
+    assert config.TASK is not None, 'Please set task name: TASK'
+
     save_path = os.path.join(config.SAVE, config.TASK, config.NAME)
     path = os.path.join(save_path, 'snapshots')
     if not os.path.isdir(path):
         os.makedirs(path)
 
     # data set
-    train_data = SuDataset(default_config.IMG,
-                           os.path.join(default_config.LIST,
-                                        default_config.TASK,
-                                        'train_{}.csv'.format(default_config.DATA_SET)),
-                           low_size=default_config.LOW_SIZE,
+    train_data = SuDataset(config.IMG,
+                           os.path.join(config.LIST,
+                                        config.TASK,
+                                        'train_{}.csv'.format(config.DATA_SET)),
+                           low_size=config.LOW_SIZE,
                            fine_size=config.FINE_SIZE)
     train_loader = DataLoader(train_data, batch_size=config.BATCH, shuffle=True, num_workers=config.N_PROCESS)
 

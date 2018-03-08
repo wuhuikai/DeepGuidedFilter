@@ -1,5 +1,21 @@
 ## DGF for Image Processing
-### Training
+### Predict
+```sh
+python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
+                   --model_path MODEL_PATH \
+                   --save_folder SAVE_FOLDER \
+                   --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced] \
+                   --low_size 64 \
+                   --gpu 0 \
+                  [--gray]
+```
+**NOTE**:
+* --model
+    * guided_filter: **DGF<sub>s</sub>**
+    * deep_guided_filter: **DGF<sub>b</sub>**
+    * deep_guided_filter_advanced: **DGF**
+* --model_path: **ALL MODEL**s in the folder [models](models).
+* --gray: It's better to generate gray images for style transfer.
 
 
 ## Guided Filtering Layer
@@ -117,7 +133,49 @@
 5. Split Training/Test set
     ```sh
     cd scripts/training_test_split
-    python split.py --set 512    --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
-    python split.py --set 1024   --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
-    python split.py --set random --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
+    python split.py --set 512 \
+                    --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
+    python split.py --set 1024 \
+                    --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
+    python split.py --set random \
+                    --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
     ```
+
+### Training
+* Option 1: Train from scratch
+    ```sh
+    python train_hr.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
+                       --name [HR|HR_AD] \
+                       --model [deep_guided_filter|deep_guided_filter_advanced]
+    ```
+* Option 2: Train with low-resolution data + Finetune
+    ```sh
+    python train_lr.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
+    
+    python train_hr_finetune.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
+                                --name [HR_FT|HR_AD_FT] \
+                                --model [deep_guided_filter|deep_guided_filter_advanced]
+    ```
+**NOTE**:
+* deep_guided_filter: **DGF<sub>b</sub>**
+* deep_guided_filter_advanced: **DGF**
+
+### Evaluate
+```sh
+python test_hr.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
+                  --name [HR|HR_AD|HR_FT|HR_AD_FT|HR_PP] \
+                  --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced]
+```
+**NOTE**:
+* guided_filter: **DGF<sub>s</sub>**
+* deep_guided_filter: **DGF<sub>b</sub>**
+* deep_guided_filter_advanced: **DGF**
+
+### Running Time
+```sh
+python test_time.py --model_id [0|1|2]
+```
+**NOTE**:
+* 0: **DGF<sub>b</sub>**
+* 1: GuidedFilteringLayer
+* 2: **DGF**

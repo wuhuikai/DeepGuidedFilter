@@ -7,12 +7,12 @@ import numpy as np
 from tqdm import tqdm
 
 from dataset import SuDataset
-from utils import tensor_to_img, calc_metric, Config, task_name
+from utils import tensor_to_img, calc_metric, Config
 
 from skimage.io import imsave
 
 default_config = Config(
-    TASK = task_name(),
+    TASK = None,
     NAME = 'LR',
     SET_NAME = 1024,
     #################### CONSTANT #####################
@@ -43,6 +43,8 @@ def compare(pre_path, gt_path):
     print('\t'+avg_results)
 
 def run(config):
+    assert config.TASK is not None, 'Please set task name: TASK'
+
     assert config.save_paths is None     and config.compare_paths is None or \
            config.save_paths is not None and config.compare_paths is not None
 
