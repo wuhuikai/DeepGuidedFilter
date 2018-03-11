@@ -27,9 +27,7 @@ def bilinear_sampler_1d_h(input_images, x_offset, wrap_mode='border', name='bili
 
     def _interpolate(im, x, y):
         with tf.variable_scope('_interpolate'):
-
             # handle both texture border types
-            _edge_size = 0
             if _wrap_mode == 'border':
                 _edge_size = 1
                 im = tf.pad(im, [[0, 0], [1, 1], [1, 1], [0, 0]], mode='CONSTANT')

@@ -21,7 +21,7 @@ import tensorflow.contrib.slim as slim
 
 from bilinear_sampler import *
 
-from guided_filter.guided_filter import fast_guided_filter
+from guided_filter_tf.guided_filter import guided_filter
 
 monodepth_parameters = namedtuple('parameters',
                                   'encoder, '
@@ -148,7 +148,6 @@ class MonodepthModel(object):
 
     def resconv(self, x, num_layers, stride):
         do_proj = tf.shape(x)[3] != num_layers or stride == 2
-        shortcut = []
         conv1 = self.conv(x, num_layers, 1, 1)
         conv2 = self.conv(conv1, num_layers, 3, stride)
         conv3 = self.conv(conv2, 4 * num_layers, 1, 1, None)
@@ -332,14 +331,14 @@ class MonodepthModel(object):
                             g1 = self.conv(g1, 1, 1, 1, None, reuse=True, scope='conv2')
                             g = tf.concat([g, g1], 3)
 
-                        self.disp1 = fast_guided_filter(g, self.disp1, self.params.dgf_r, self.params.dgf_eps, nhwc=True)
+                        self.disp1 = guided_filter(g, self.disp1, self.params.dgf_r, self.params.dgf_eps, nhwc=True)
 
                         self.disp1 = 0.3 * tf.nn.sigmoid(self.disp1)
 
                 if self.mode == 'test' and self.params.guided_filter_eval:
                     with tf.variable_scope('guided_filter_eval'):
                         x = tf.reduce_sum(self.model_input, axis=3, keep_dims=True)
-                        self.disp1 = fast_guided_filter(x, self.disp1, self.params.dgf_r, self.params.dgf_eps, nhwc=True)
+                        self.disp1 = guided_filter(x, self.disp1, self.params.dgf_r, self.params.dgf_eps, nhwc=True)
                         self.disp1 = tf.clip_by_value(self.disp1, 0, 0.3)
 
     def build_outputs(self):

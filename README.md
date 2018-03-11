@@ -1,22 +1,4 @@
-## DGF for Image Processing
-### Predict
-```sh
-python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
-                   --model_path MODEL_PATH \
-                   --save_folder SAVE_FOLDER \
-                   --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced] \
-                   --low_size 64 \
-                   --gpu 0 \
-                  [--gray]
-```
-**NOTE**:
-* --model
-    * guided_filter: **DGF<sub>s</sub>**
-    * deep_guided_filter: **DGF<sub>b</sub>**
-    * deep_guided_filter_advanced: **DGF**
-* --model_path: **ALL MODEL**s in the folder [models](models).
-* --gray: It's better to generate gray images for style transfer.
-
+## DGF for Computer Vision
 
 ## Guided Filtering Layer
 ### Install
@@ -179,3 +161,95 @@ python test_time.py --model_id [0|1|2]
 * 0: **DGF<sub>b</sub>**
 * 1: GuidedFilteringLayer
 * 2: **DGF**
+
+### Predict
+```sh
+python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
+                   --model_path MODEL_PATH \
+                   --save_folder SAVE_FOLDER \
+                   --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced] \
+                   --low_size 64 \
+                   --gpu 0 \
+                  [--gray]
+```
+**NOTE**:
+* --model
+    * guided_filter: **DGF<sub>s</sub>**
+    * deep_guided_filter: **DGF<sub>b</sub>**
+    * deep_guided_filter_advanced: **DGF**
+* --model_path: **ALL MODEL**s in the folder [models](models).
+* --gray: It's better to generate gray images for style transfer.
+## DGF for Computer Vision
+### Monocular Depth Estimation
+#### Try it on an image !
+1. **Download** and **Unzip** Pretrained Model
+    
+    [[**WITH**](https://drive.google.com/file/d/1dKDYRtZPahoFJZ5ZJNilgHEvT6gG4SC6/view?usp=sharing)|[**WITHOUT**](https://drive.google.com/file/d/1w-f75x8WYRKukoQOP-TYJIq4--W40nrq/view?usp=sharing)] Guided Filtering Layer
+2. Run on an Image !
+    * **WITHOUT** Guided Filtering Layer
+    ```sh
+    python monodepth_simple.py --image_path [IMAGE_PATH] --checkpoint_path [MODEL_PATH]
+    ```
+    * **WITH** Guided Filter as **PostProcessing**
+    ```sh
+    python monodepth_simple.py --image_path [IMAGE_PATH] --checkpoint_path [MODEL_PATH] --guided_filter_eval
+    ```
+    * **WITH** Guided Filtering Layer
+    ```sh
+    python monodepth_simple.py --image_path [IMAGE_PATH] --checkpoint_path [MODEL_PATH] --guided_filter
+    ```
+#### Training on KITTI
+1. Download KITTI
+    ```sh
+    wget -i utils/kitti_archives_to_download.txt -P [SAVE_FOLDER]
+    ```
+2. (**Optional**) Convert *.**png** to *.**jpg** to save space.
+    ```sh
+    find [SAVE_FOLDER] -name '*.png' | parallel 'convert {.}.png {.}.jpg && rm {}'
+    ```
+3. Let's train the model !
+    * **WITHOUT** Guided Filtering Layer
+        ```sh
+        python monodepth_main.py --mode train \
+                                 --model_name monodepth_kitti \
+                                 --data_path [SAVE_FOLDER] \
+                                 --filenames_file utils/filenames/kitti_train_files.txt \
+                                 --log_directory checkpoints
+        ```
+    * **WITH** Guided Filtering Layer
+        ```sh
+        python monodepth_main.py --mode train \
+                                 --model_name monodepth_kitti_dgf \
+                                 --data_path [SAVE_FOLDER] \
+                                 --filenames_file utils/filenames/kitti_train_files.txt \
+                                 --log_directory checkpoints \
+                                 --guided_filter
+        ```
+4. Testing
+    * **WITHOUT** Guided Filtering Layer
+        ```sh
+        python monodepth_main.py --mode test \
+                                 --data_path [SAVE_FOLDER] \
+                                 --filenames_file utils/filenames/kitti_stereo_2015_test_files.txt \
+                                 --checkpoint_path [MODEL_PATH]
+        ``` 
+    * **WITH** Guided Filter as **PostProcessing**
+        ```sh
+        python monodepth_main.py --mode test \
+                                 --data_path [SAVE_FOLDER] \
+                                 --filenames_file utils/filenames/kitti_stereo_2015_test_files.txt \
+                                 --checkpoint_path [MODEL_PATH] \
+                                 --guided_filter_eval
+        ```
+    * **WITH** Guided Filtering Layer
+        ```sh
+        python monodepth_main.py --mode test \
+                                 --data_path [SAVE_FOLDER] \
+                                 --filenames_file utils/filenames/kitti_stereo_2015_test_files.txt \
+                                 --checkpoint_path [MODEL_PATH] \
+                                 --guided_filter
+        ```
+5. Evaluation on KITTI
+    ```sh
+    python utils/evaluate_kitti.py --split kitti --predicted_disp_path [disparities.npy] --gt_path [SAVE_FOLDER]
+    ```

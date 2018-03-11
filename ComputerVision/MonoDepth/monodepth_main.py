@@ -11,15 +11,14 @@ from __future__ import absolute_import, division, print_function
 
 # only keep warnings and errors
 import os
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
-import argparse
 import time
+import argparse
 
 from monodepth_model import *
-from monodepth_dataloader import *
 from average_gradients import *
+from monodepth_dataloader import *
 
 parser = argparse.ArgumentParser(description='Monodepth TensorFlow implementation.')
 
@@ -89,7 +88,6 @@ def train(params):
 
         steps_per_epoch = np.ceil(num_training_samples / params.batch_size).astype(np.int32)
         num_total_steps = params.num_epochs * steps_per_epoch
-        start_learning_rate = args.learning_rate
 
         boundaries = [np.int32((3 / 5) * num_total_steps), np.int32((4 / 5) * num_total_steps)]
         values = [args.learning_rate, args.learning_rate / 2, args.learning_rate / 4]
@@ -153,7 +151,7 @@ def train(params):
         sess.run(tf.global_variables_initializer())
         sess.run(tf.local_variables_initializer())
         coordinator = tf.train.Coordinator()
-        threads = tf.train.start_queue_runners(sess=sess, coord=coordinator)
+        tf.train.start_queue_runners(sess=sess, coord=coordinator)
 
         # LOAD CHECKPOINT IF SET
         if args.checkpoint_path != '':
@@ -203,7 +201,7 @@ def test(params):
     sess.run(tf.global_variables_initializer())
     sess.run(tf.local_variables_initializer())
     coordinator = tf.train.Coordinator()
-    threads = tf.train.start_queue_runners(sess=sess, coord=coordinator)
+    tf.train.start_queue_runners(sess=sess, coord=coordinator)
 
     # RESTORE
     if args.checkpoint_path == '':

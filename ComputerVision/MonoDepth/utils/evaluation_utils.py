@@ -88,10 +88,8 @@ def read_file_data(files, data_root):
     for filename in files:
         filename = filename.split()[0]
         splits = filename.split('/')
-        camera_id = np.int32(splits[2][-1:])  # 2 is left, 3 is right
         date = splits[0]
         im_id = splits[4][:10]
-        file_root = '{}/{}'
 
         im = filename
         vel = '{}/{}/velodyne_points/data/{}.bin'.format(splits[0], splits[1], im_id)

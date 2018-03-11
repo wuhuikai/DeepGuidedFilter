@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 
 # only keep warnings and errors
 import os
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
 
 import argparse
@@ -19,8 +18,8 @@ import scipy.misc
 import matplotlib.pyplot as plt
 
 from monodepth_model import *
-from monodepth_dataloader import *
 from average_gradients import *
+from monodepth_dataloader import *
 
 parser = argparse.ArgumentParser(description='Monodepth TensorFlow implementation.')
 
@@ -29,6 +28,10 @@ parser.add_argument('--image_path', type=str, help='path to the image', required
 parser.add_argument('--checkpoint_path', type=str, help='path to a specific checkpoint to load', required=True)
 parser.add_argument('--input_height', type=int, help='input height', default=256)
 parser.add_argument('--input_width', type=int, help='input width', default=512)
+parser.add_argument('--guided_filter', action='store_true', default=False)
+parser.add_argument('--guided_filter_eval', action='store_true', default=False)
+parser.add_argument('--dgf_r', type=int, default=4)
+parser.add_argument('--dgf_eps', type=float, default=1e-2)
 
 args = parser.parse_args()
 
@@ -46,7 +49,6 @@ def post_process_disparity(disp):
 
 def test_simple(params):
     """Test function."""
-
     left = tf.placeholder(tf.float32, [2, args.input_height, args.input_width, 3])
     model = MonodepthModel(params, "test", left, None)
 
@@ -100,7 +102,12 @@ def main(_):
         alpha_image_loss=0,
         disp_gradient_loss_weight=0,
         lr_loss_weight=0,
-        full_summary=False)
+        full_summary=False,
+        guided_filter=args.guided_filter,
+        guided_filter_eval=args.guided_filter_eval,
+        dgf_r=args.dgf_r,
+        dgf_eps=args.dgf_eps
+    )
 
     test_simple(params)
 
