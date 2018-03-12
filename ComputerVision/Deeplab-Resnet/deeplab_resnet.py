@@ -1,23 +1,13 @@
 import torch.nn as nn
+
 from torch.nn import functional as F
+from guided_filter_pytorch.guided_filter import GuidedFilter
 
-from deepguidedfilter.guided_filter import FastGuidedFilter
-
-affine_par = True
-
-
-# def outS(i):
-#     i = int(i)
-#     i = (i + 1) / 2
-#     i = int(np.ceil((i + 1) / 2.0))
-#     i = (i + 1) / 2
-#     return i
-
+AFFINE = True
 
 def conv3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=1, bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -26,10 +16,10 @@ class BasicBlock(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
-        self.bn1 = nn.BatchNorm2d(planes, affine=affine_par)
+        self.bn1 = nn.BatchNorm2d(planes, affine=AFFINE)
         self.relu = nn.ReLU(inplace=True)
         self.conv2 = conv3x3(planes, planes)
-        self.bn2 = nn.BatchNorm2d(planes, affine=affine_par)
+        self.bn2 = nn.BatchNorm2d(planes, affine=AFFINE)
         self.downsample = downsample
         self.stride = stride
 
@@ -58,7 +48,7 @@ class Bottleneck(nn.Module):
     def __init__(self, inplanes, planes, stride=1, dilation_=1, downsample=None):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, stride=stride, bias=False)
-        self.bn1 = nn.BatchNorm2d(planes, affine=affine_par)
+        self.bn1 = nn.BatchNorm2d(planes, affine=AFFINE)
         for i in self.bn1.parameters():
             i.requires_grad = False
         padding = 1
@@ -68,11 +58,11 @@ class Bottleneck(nn.Module):
             padding = 4
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1,
                                padding=padding, bias=False, dilation=dilation_)
-        self.bn2 = nn.BatchNorm2d(planes, affine=affine_par)
+        self.bn2 = nn.BatchNorm2d(planes, affine=AFFINE)
         for i in self.bn2.parameters():
             i.requires_grad = False
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
-        self.bn3 = nn.BatchNorm2d(planes * 4, affine=affine_par)
+        self.bn3 = nn.BatchNorm2d(planes * 4, affine=AFFINE)
         for i in self.bn3.parameters():
             i.requires_grad = False
         self.relu = nn.ReLU(inplace=True)
@@ -103,7 +93,6 @@ class Bottleneck(nn.Module):
 
 
 class Classifier_Module(nn.Module):
-
     def __init__(self, dilation_series, padding_series, NoLabels):
         super(Classifier_Module, self).__init__()
         self.conv2d_list = nn.ModuleList()
@@ -127,7 +116,7 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
-        self.bn1 = nn.BatchNorm2d(64, affine=affine_par)
+        self.bn1 = nn.BatchNorm2d(64, affine=AFFINE)
         for i in self.bn1.parameters():
             i.requires_grad = False
         self.relu = nn.ReLU(inplace=True)
@@ -151,7 +140,7 @@ class ResNet(nn.Module):
             downsample = nn.Sequential(
                 nn.Conv2d(self.inplanes, planes * block.expansion,
                           kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(planes * block.expansion, affine=affine_par),
+                nn.BatchNorm2d(planes * block.expansion, affine=AFFINE),
             )
         for i in downsample._modules['1'].parameters():
             i.requires_grad = False
@@ -193,26 +182,9 @@ class MS_Deeplab(nn.Module):
             self.guided_map_relu1 = nn.ReLU(inplace=True)
             self.guided_map_conv2 = nn.Conv2d(64, NoLabels, 1)
 
-            self.guided_filter = FastGuidedFilter(dgf_r, dgf_eps)
+            self.guided_filter = GuidedFilter(dgf_r, dgf_eps)
 
     def forward(self, x, im=None):
-        # input_size = x.size()[2]
-        # self.interp1 = nn.Upsample(size=(int(input_size * 0.75) + 1, int(input_size * 0.75) + 1), mode='bilinear')
-        # self.interp2 = nn.Upsample(size=(int(input_size * 0.5) + 1, int(input_size * 0.5) + 1), mode='bilinear')
-        # self.interp3 = nn.Upsample(size=(outS(input_size), outS(input_size)), mode='bilinear')
-        # out = []
-        # x2 = self.interp1(x)
-        # x3 = self.interp2(x)
-        # out.append(self.Scale(x))  # for original scale
-        # out.append(self.interp3(self.Scale(x2)))  # for 0.75x scale
-        # out.append(self.Scale(x3))  # for 0.5x scale
-        #
-        # x2Out_interp = out[1]
-        # x3Out_interp = self.interp3(out[2])
-        # temp1 = torch.max(out[0], x2Out_interp)
-        # out.append(torch.max(temp1, x3Out_interp))
-        # return out
-
         output = self.Scale(x)
 
         if self.dgf:
