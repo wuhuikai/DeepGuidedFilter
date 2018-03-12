@@ -1,22 +1,24 @@
 from __future__ import print_function
 
-import argparse
 import os
-import random
+import argparse
 
 import numpy as np
-import torch.backends.cudnn as cudnn
+
 import torch.utils.data
+import torch.backends.cudnn as cudnn
+
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
+
 from skimage.io import imsave
+
 from torch.autograd import Variable
 
 import models.dss as dss
-from deepguidedfilter.guided_filter import FastGuidedFilter
 
-import pydensecrf.densecrf as dcrf
-from pydensecrf.utils import unary_from_softmax
+from guided_filter_pytorch.guided_filter import GuidedFilter
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataroot', required=True, help='path to dataset')
@@ -34,20 +36,13 @@ parser.add_argument('--experiment', default='results', help='Where to store samp
 opt = parser.parse_args()
 print(opt)
 
-CRF = True
-
 if not os.path.isdir(opt.experiment):
     os.makedirs(opt.experiment)
 
-opt.manualSeed = random.randint(1, 10000)  # fix seed
-print("Random Seed: ", opt.manualSeed)
-random.seed(opt.manualSeed)
-torch.manual_seed(opt.manualSeed)
-
 cudnn.benchmark = True
+
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
-
 dataset = dset.ImageFolder(root=opt.dataroot,
                            transform=transforms.Compose([
                                transforms.ToTensor()]))
@@ -56,14 +51,11 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=1,
 
 netG = dss.network_dss(3, opt.nn_dgf, opt.nn_dgf_r, opt.nn_dgf_eps, opt.post_sigmoid)
 netG.load_state_dict(torch.load(opt.netG))
-
+if opt.dgf:
+    dgf = GuidedFilter(opt.dgf_r, opt.dgf_eps)
 real_A = torch.FloatTensor()
 real_x = torch.FloatTensor()
 real_B = torch.FloatTensor()
-
-if opt.dgf:
-    dgf = FastGuidedFilter(opt.dgf_r, opt.dgf_eps)
-
 if opt.cuda:
     netG = netG.cuda()
     if opt.dgf:
@@ -97,22 +89,7 @@ for idx, (data, _) in enumerate(iter(dataloader)):
         image_B = dgf(input_x, fake_B).clamp(0, 1)
     else:
         image_B = fake_B
-
     image_B = image_B.data.cpu()
-
-    if CRF:
-        img = np.ascontiguousarray(np.asarray(np.squeeze(data[0, :3, :, 0:w].cpu().numpy()).transpose(1, 2, 0) * 255, np.uint8))
-        d = dcrf.DenseCRF2D(img.shape[1], img.shape[0], 2)
-
-        image_B = image_B[0].numpy()
-        lp2 = np.concatenate((1 - image_B, image_B), axis=0)
-        d.setUnaryEnergy(unary_from_softmax(lp2, scale=None, clip=1e-5))
-
-        d.addPairwiseGaussian(sxy=(5, 5), compat=3, kernel=dcrf.DIAG_KERNEL, normalization=dcrf.NORMALIZE_SYMMETRIC)
-        d.addPairwiseBilateral(sxy=(60, 60), srgb=(8, 8, 8), rgbim=img, compat=3, kernel=dcrf.DIAG_KERNEL,
-                               normalization=dcrf.NORMALIZE_SYMMETRIC)
-
-        image_B = torch.from_numpy(np.reshape(np.array(d.inference(5))[1], image_B.shape))
 
     imsave(os.path.join(opt.experiment, '{}_sal.png'.format(idx)), image_B.mul(255).numpy().squeeze().astype(np.uint8))
     imsave(os.path.join(opt.experiment, '{}.png'.format(idx)), real_B.mul(255).cpu().numpy().squeeze().astype(np.uint8))

@@ -1,21 +1,23 @@
 from __future__ import print_function
 
-import argparse
-import math
 import os
-import random
+import math
+import argparse
 
 import numpy as np
+
 import torch
-import torch.backends.cudnn as cudnn
 import torch.nn as nn
+import torch.utils.data
 import torch.nn.parallel
 import torch.optim as optim
+import torch.backends.cudnn as cudnn
 import torch.optim.lr_scheduler as lrs
-import torch.utils.data
+
 import torchvision.datasets as dset
 import torchvision.models as visionmodels
 import torchvision.transforms as transforms
+
 from torch.autograd import Variable
 
 import models.dss as dss
@@ -30,32 +32,9 @@ parser.add_argument('--netG', default='', help="path to netG (to continue traini
 parser.add_argument('--dgf', action='store_true', help='enables dgf')
 parser.add_argument('--dgf_r', type=int, default=8, help='dgf radius')
 parser.add_argument('--dgf_eps', type=float, default=1e-2, help='dgf eps')
-parser.add_argument('--post_sigmoid', action='store_true', help='sigmoid after dgf')
 parser.add_argument('--experiment', default='checkpoints', help='Where to store samples and models')
 opt = parser.parse_args()
 print(opt)
-
-if not os.path.isdir(opt.experiment):
-    os.makedirs(opt.experiment)
-
-opt.manualSeed = random.randint(1, 10000)  # fix seed
-print("Random Seed: ", opt.manualSeed)
-random.seed(opt.manualSeed)
-torch.manual_seed(opt.manualSeed)
-
-cudnn.benchmark = True
-
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-
-# folder dataset
-dataset = dset.ImageFolder(root=os.path.join(opt.dataroot, 'train'),
-                           transform=transforms.Compose([
-                               transforms.ToTensor(),
-                           ]))
-
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=1,
-                                         shuffle=True, num_workers=opt.workers)
 
 
 def weights_init(m):
@@ -76,11 +55,6 @@ def weights_init(m):
             og = np.ogrid[:n, :n]
             weights_np = (1 - abs(og[0] - center) / factor) * (1 - abs(og[1] - center) / factor)
             p.weight.data.copy_(torch.from_numpy(weights_np))
-
-
-netG = dss.network_dss(3, opt.dgf, opt.dgf_r, opt.dgf_eps, opt.post_sigmoid)
-netG.apply(weights_init)
-criterion = nn.BCELoss()
 
 
 # fine-tune from VGG16
@@ -116,21 +90,36 @@ def fine_tune(net):
     return net
 
 
-print('=>finetune from the VGG16... done !')
-netG = fine_tune(netG)
+cudnn.benchmark = True
 
+if not os.path.isdir(opt.experiment):
+    os.makedirs(opt.experiment)
+
+# folder dataset
+dataset = dset.ImageFolder(root=os.path.join(opt.dataroot, 'train'),
+                           transform=transforms.Compose([
+                               transforms.ToTensor(),
+                           ]))
+dataloader = torch.utils.data.DataLoader(dataset, batch_size=1,
+                                         shuffle=True, num_workers=opt.workers)
+normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+
+netG = dss.network_dss(3, opt.dgf, opt.dgf_r, opt.dgf_eps, False)
+criterion = nn.BCELoss()
+netG.apply(weights_init)
+netG = fine_tune(netG)
+print('=>finetune from the VGG16... done !')
 if opt.netG:  # load checkpoint if needed
     checkpoint = torch.load(opt.netG)
     model_dict = netG.state_dict()
     model_dict.update(checkpoint)
     netG.load_state_dict(model_dict)
-
 print(netG)
 
 real_B = torch.FloatTensor()
 real_A = torch.FloatTensor()
 real_x = torch.FloatTensor()
-
 if opt.cuda:
     netG.cuda()
     real_B = real_B.cuda()

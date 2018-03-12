@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.parallel
 
-from deepguidedfilter.guided_filter import FastGuidedFilter
+from guided_filter_pytorch.guided_filter import GuidedFilter
 
 class network_dss(nn.Module):
     def __init__(self, input_nc, dgf, dgf_r, dgf_eps, post_sigmoid):
@@ -122,7 +122,7 @@ class network_dss(nn.Module):
             self.guided_map_relu1 = nn.ReLU(inplace=True)
             self.guided_map_conv2 = nn.Conv2d(64,  1, 1)
 
-            self.guided_filter = FastGuidedFilter(dgf_r, dgf_eps)
+            self.guided_filter = GuidedFilter(dgf_r, dgf_eps)
 
         self.post_sigmoid = post_sigmoid
 
