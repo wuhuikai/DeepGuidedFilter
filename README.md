@@ -1,5 +1,15 @@
 ## Guided Filtering Layer
 ### Install
+#### Released Version
+* PyTorch Version
+    ```sh
+    pip install guided-filter-pytorch
+    ```
+* Tensorflow Version
+    ```sh
+    pip install guided-filter-tf
+    ```
+#### Latest Version
 * PyTorch Version
     ```sh
     pip install -e GuidedFilteringLayer/GuidedFilter_PyTorch
@@ -181,8 +191,8 @@ python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
 ### Monocular Depth Estimation
 #### Try it on an image !
 1. **Download** and **Unzip** Pretrained Model
-    
-    [[**WITH**](https://drive.google.com/file/d/1dKDYRtZPahoFJZ5ZJNilgHEvT6gG4SC6/view?usp=sharing)|[**WITHOUT**](https://drive.google.com/file/d/1w-f75x8WYRKukoQOP-TYJIq4--W40nrq/view?usp=sharing)] Guided Filtering Layer
+    * **WITH** Guided Filtering Layer [[Google Drive](https://drive.google.com/file/d/1dKDYRtZPahoFJZ5ZJNilgHEvT6gG4SC6/view?usp=sharing)|[BaiduYunPan](https://pan.baidu.com/s/1-GkMaRAVym8UEmQ6ia5cHw)]
+    * **WITHOUT** Guided Filtering Layer [[Google Drive](https://drive.google.com/file/d/1w-f75x8WYRKukoQOP-TYJIq4--W40nrq/view?usp=sharing)|[BaiduYunPan](https://pan.baidu.com/s/19IkFGX5I-zc3Ap5mZHQzOw)]
 2. Run on an Image !
     * **WITHOUT** Guided Filtering Layer
     ```sh
@@ -253,7 +263,7 @@ python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
     ```
 ### Semantic Segmentation with Deeplab-Resnet
 #### Try it on an image!
-1. Download the pretrained [model](https://drive.google.com/open?id=1YXZoZIZNR1ACewiUBp4UDvo_P65cCooK).
+1. Download the pretrained model [[Google Drive](https://drive.google.com/open?id=1YXZoZIZNR1ACewiUBp4UDvo_P65cCooK)|[BaiduYunPan](https://pan.baidu.com/s/1dEnpcGfchlZA_fVGdve0ig)].
 2. Run it now !
     ```sh
     python predict_dgf.py --img_path [IM_PATH] --snapshots [MODEL_PATH]
@@ -288,7 +298,7 @@ python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
      ln -s [ROOT]/benchmark_RELEASE/dataset/img data/img
     ```
 #### Training
-1. Download pretrained [model](https://drive.google.com/file/d/12ZLRUFQzmC7FFPZpS5tkzOQZLrhG7qt1/view?usp=sharing) on MS-COCO, put it in the folder [data](data).
+1. Download pretrained model [[Google Drive](https://drive.google.com/file/d/12ZLRUFQzmC7FFPZpS5tkzOQZLrhG7qt1/view?usp=sharing)|[BaiduYunPan](https://pan.baidu.com/s/1k0ODhkI65_h1szUamtGs0w)] on MS-COCO, put it in the folder [data](data).
 2. Train the model !
     * **WITHOUT** Guided Filtering Layer
         ```sh
@@ -314,7 +324,7 @@ python predict.py [--img_path IMG_PATH | --img_list IMG_LIST] \
         ```
 ### Saliency Detection with DSS
 #### Try on an image!
-1. Download the pretrained [model](https://drive.google.com/open?id=1ZxbAAJw9BxCKj2e2QsBmCnjWLFlCGLf1).
+1. Download the pretrained model [[Google Drive](https://drive.google.com/open?id=1ZxbAAJw9BxCKj2e2QsBmCnjWLFlCGLf1)|[BaiduYunPan](https://pan.baidu.com/s/1pgOMh3V50lRa6slbIW_SKQ)].
 2. Try it now !
     ```sh
     python predict.py --im_path [IM_PATH] \
