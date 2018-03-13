@@ -1,0 +1,6 @@
+scipy == 1.0.0
+numpy == 1.12.1
+Pillow == 4.3.0
+matplotlib == 2.1.1
+tensorflow_gpu == 1.4.0
+guided_filter_tf == 1.0

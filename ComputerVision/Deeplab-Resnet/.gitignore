@@ -1,9 +1,0 @@
-# result
-data/deeplab_*/
-
-# dataset
-data/gt
-data/img
-
-# model
-*.pth

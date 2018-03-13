@@ -2,15 +2,21 @@ import os
 import argparse
 
 import torch
-from torch.autograd import Variable
+import numpy as np
 
 from tqdm import tqdm
+from skimage.io import imsave
+from torch.autograd import Variable
 
 from dataset import PreSuDataset
-from utils import tensor_to_img, calc_metric, Config
 from module import DeepGuidedFilter, DeepGuidedFilterAdvanced
 
-from skimage.io import imsave
+def tensor_to_img(tensor, transpose=False):
+    im = np.asarray(np.clip(np.squeeze(tensor.numpy()) * 255, 0, 255), dtype=np.uint8)
+    if transpose:
+        im = im.transpose((1, 2, 0))
+
+    return im
 
 parser = argparse.ArgumentParser(description='Predict with Deep Guided Filtering Networks')
 parser.add_argument('--img_path',    type=str, default=None,                       help='IMG_PATH')

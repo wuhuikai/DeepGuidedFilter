@@ -18,8 +18,6 @@ import scipy.misc
 import matplotlib.pyplot as plt
 
 from monodepth_model import *
-from average_gradients import *
-from monodepth_dataloader import *
 
 parser = argparse.ArgumentParser(description='Monodepth TensorFlow implementation.')
 

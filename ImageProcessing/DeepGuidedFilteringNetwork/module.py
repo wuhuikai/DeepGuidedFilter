@@ -1,28 +1,7 @@
 import torch
 import torch.nn as nn
 
-from torch.nn import init
-
 from guided_filter_pytorch.guided_filter import FastGuidedFilter
-
-def weights_init_identity(m):
-    classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
-        n_out, n_in, h, w = m.weight.data.size()
-        # Last Layer
-        if n_out < n_in:
-            init.xavier_uniform(m.weight.data)
-            return
-
-        # Except Last Layer
-        m.weight.data.zero_()
-        ch, cw = h // 2, w // 2
-        for i in range(n_in):
-            m.weight.data[i, i, ch, cw] = 1.0
-
-    elif classname.find('BatchNorm2d') != -1:
-        init.constant(m.weight.data, 1.0)
-        init.constant(m.bias.data,   0.0)
 
 class AdaptiveNorm(nn.Module):
     def __init__(self, n):
@@ -58,8 +37,6 @@ def build_lr_net(norm=AdaptiveNorm, layer=5):
 
     net = nn.Sequential(*layers)
 
-    net.apply(weights_init_identity)
-
     return net
 
 class DeepGuidedFilter(nn.Module):
@@ -84,7 +61,6 @@ class DeepGuidedFilterAdvanced(DeepGuidedFilter):
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(15, 3, 1)
         )
-        self.guided_map.apply(weights_init_identity)
 
     def forward(self, x_lr, x_hr):
         return self.gf(self.guided_map(x_lr), self.lr(x_lr), self.guided_map(x_hr))
