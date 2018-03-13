@@ -39,7 +39,7 @@ class RandomCrop(object):
         x1 = random.randint(0, w - self.size)
         y1 = random.randint(0, h - self.size)
 
-        return [transforms.crop(img, y1, x1, self.size, self.size) for img in imgs]
+        return [img.crop(x1, y1, x1+self.size, y1+self.size) for img in imgs]
 
 class RandomRotate(object):
     def __call__(self, imgs):
@@ -70,8 +70,8 @@ class SuDataset(data.Dataset):
         self.loader = loader
 
         def append(imgs):
-            imgs.append(transforms.resize(imgs[0], low_size, interpolation=Image.NEAREST))
-            imgs.append(transforms.resize(imgs[1], low_size, interpolation=Image.NEAREST))
+            imgs.append(transforms.Scale(low_size, interpolation=Image.NEAREST)(imgs[0]))
+            imgs.append(transforms.Scale(low_size, interpolation=Image.NEAREST)(imgs[1]))
             return imgs
 
         self.transform = Compose([
@@ -104,7 +104,7 @@ class PreSuDataset(data.Dataset):
         self.loader = loader
 
         def append(imgs):
-            imgs.append(transforms.resize(imgs[0], low_size, interpolation=Image.NEAREST))
+            imgs.append(transforms.Scale(low_size, interpolation=Image.NEAREST)(imgs[0]))
             return imgs
 
         self.transform = Compose([
