@@ -11,18 +11,17 @@ CVPR 2018
 
 ## Install
 ```
-pip install guided-filter-pytorch
+pip install guided-filter-tf
 ```
 ## Usage
 ```
-from guided_filter_pytorch.guided_filter import FastGuidedFilter
-
-hr_y = FastGuidedFilter(r, eps)(lr_x, lr_y, hr_x)
+from guided_filter_tf.guided_filter import fast_guided_filter
+    
+hr_y = fast_guided_filter(lr_x, lr_y, hr_x, r, eps, nhwc)
 ```
 ```
-from guided_filter_pytorch.guided_filter import GuidedFilter
-
-hr_y = GuidedFilter(r, eps)(hr_x, init_hr_y)
+from guided_filter_tf.guided_filter import guided_filter
+hr_y = guided_filter(hr_x, init_hr_y, r, eps, nhwc)
 ``` 
 ## Citation
 ```
