@@ -19,9 +19,9 @@ def tensor_to_img(tensor, transpose=False):
     return im
 
 parser = argparse.ArgumentParser(description='Predict with Deep Guided Filtering Networks')
+parser.add_argument('--task',        type=str, default='auto_ps',                  help='TASK')
 parser.add_argument('--img_path',    type=str, default=None,                       help='IMG_PATH')
 parser.add_argument('--img_list',    type=str, default=None,                       help='IMG_LIST')
-parser.add_argument('--model_path',  type=str, required=True,                      help='MODEL_PATH')
 parser.add_argument('--save_folder', type=str, required=True,                      help='SAVE_FOLDER')
 parser.add_argument('--model',       type=str, default='deep_guided_filter',       help='model')
 
@@ -53,10 +53,15 @@ else:
     print('Not a valid model!')
     exit(-1)
 
+model2name = {'guided_filter': 'lr',
+              'deep_guided_filter': 'hr',
+              'deep_guided_filter_advanced': 'hr_ad'}
+model_path = os.path.join('models', args.task, '{}_net_latest.pth'.format(model2name[args.model]))
+
 if args.model in ['deep_guided_filter', 'deep_guided_filter_advanced']:
-    model.load_state_dict(torch.load(args.model_path))
+    model.load_state_dict(torch.load(model_path))
 elif args.model == 'guided_filter':
-    model.init_lr(args.model_path)
+    model.init_lr(model_path)
 else:
     print('Not a valid model!')
     exit(-1)
