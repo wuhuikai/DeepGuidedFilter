@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
+try:
+   import pypandoc
+   long_description = pypandoc.convert('README.md', 'rst')
+   print(long_description)
+except (IOError, ImportError):
+    long_description = ''
+
 setup(
     name="guided_filter_pytorch",
-    version="1.0",
-    description="Deep Guided Filtering Layer",
+    version="1.0.2",
+    description="Deep Guided Filtering Layer for PyTorch",
+    long_description=long_description,
     url="https://github.com/wuhuikai/DeepGuidedFilter",
     author="wuhuikai",
     author_email="huikaiwu@icloud.com",

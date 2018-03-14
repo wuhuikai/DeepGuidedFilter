@@ -8,5 +8,6 @@ matplotlib == 2.1.0
 tensorboardX == 0.8
 torchvision == 0.1.9
 setuptools == 36.4.0
+guided_filter_pytorch
 scikit_image == 0.13.1
-guided_filter_pytorch == 1.0
+
