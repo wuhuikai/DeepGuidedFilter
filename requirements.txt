@@ -1,0 +1,12 @@
+tqdm == 4.19.4
+scipy == 1.0.0
+numpy == 1.14.0
+rawpy == 0.10.1
+docopt == 0.6.2
+Pillow == 4.3.0
+matplotlib == 2.1.0
+tensorboardX == 0.8
+torchvision == 0.1.9
+setuptools == 36.4.0
+scikit_image == 0.13.1
+guided_filter_pytorch == 1.0
