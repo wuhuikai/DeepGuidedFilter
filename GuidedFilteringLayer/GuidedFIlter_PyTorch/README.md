@@ -1,5 +1,5 @@
 # Fast End-to-End Trainable Guided Filter
-[[GitHub]](https://github.com/wuhuikai/DeepGuidedFilter) [[Project]](https://github.com/wuhuikai/DeepGuidedFilter)    [[Paper]](https://github.com/wuhuikai/DeepGuidedFilter)    [[Demo]](https://github.com/wuhuikai/DeepGuidedFilter)    [[Home]](https://github.com/wuhuikai/DeepGuidedFilter)
+[[Project]](http://wuhuikai.me/DeepGuidedFilterProject)    [[Paper]](http://wuhuikai.me/DeepGuidedFilterProject/deep_guided_filter.pdf)    [[Demo]](http://wuhuikai.me/DeepGuidedFilterProject#demo)    [[Home]](http://wuhuikai.me)
 
 Official implementation of **Fast End-to-End Trainable Guided Filter**.     
 **Faster**, **Better** and **Lighter**  for image processing and dense prediction.
