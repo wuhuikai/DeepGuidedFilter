@@ -13,11 +13,11 @@ Official implementation of **Fast End-to-End Trainable Guided Filter**.
 Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang    
 CVPR 2018
 
-Given a high-resolution image, a corresponding low-resolution image and a low-resolution target, our algorithm generates the corresponding high-resolution target. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs **10-100** times faster. 
+Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs **10-100** times faster. 
 
 Contact: Hui-Kai Wu (huikaiwu@icloud.com)
 
-## Try it on an image !
+## Try it on an image!
 ### Prepare Environment
 1. Download source code from GitHub.
     ```sh
