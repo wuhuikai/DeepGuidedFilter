@@ -10,7 +10,7 @@ except (IOError, ImportError):
 
 setup(
     name="guided_filter_pytorch",
-    version="1.1",
+    version="1.1.1",
     description="Deep Guided Filtering Layer for PyTorch",
     long_description=long_description,
     url="https://github.com/wuhuikai/DeepGuidedFilter",
