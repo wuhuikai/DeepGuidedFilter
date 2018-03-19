@@ -46,7 +46,8 @@ RMS: **5.887** [Baseline: 6.081]
                                  --log_directory checkpoints \
                                  --guided_filter
         ```
-4. Testing
+4. Download [Test Dataset](http://www.cvlibs.net/download.php?file=data_scene_flow.zip)
+5. Testing
     * **WITHOUT** Guided Filtering Layer
         ```sh
         python monodepth_main.py --mode test \
