@@ -1,7 +1,5 @@
 import torch
 
-from torch.nn import functional as F
-
 from box_filter import BoxFilter
 
 
@@ -11,9 +9,8 @@ class FastGuidedFilter(torch.jit.ScriptModule):
         self.boxfilter = BoxFilter()
 
     @torch.jit.script_method
-    def forward(self, lr_x:torch.Tensor, lr_y:torch.Tensor, hr_x:torch.Tensor, r:int, eps:float):
+    def forward(self, lr_x:torch.Tensor, lr_y:torch.Tensor, r:int, eps:float):
         _, _, h_lrx, w_lrx = lr_x.size()
-        _, _, h_hrx, w_hrx = hr_x.size()
 
         ## N
         N = self.boxfilter(torch.ones(1, 1, h_lrx, w_lrx).to(lr_x), r)
@@ -32,8 +29,4 @@ class FastGuidedFilter(torch.jit.ScriptModule):
         ## b
         b = mean_y - A * mean_x
 
-        ## mean_A; mean_b
-        mean_A = F.upsample(A, (h_hrx, w_hrx), mode='bilinear')
-        mean_b = F.upsample(b, (h_hrx, w_hrx), mode='bilinear')
-
-        return mean_A*hr_x+mean_b
+        return A, b

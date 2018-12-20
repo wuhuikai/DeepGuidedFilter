@@ -5,6 +5,8 @@ import numpy as np
 
 import torch
 
+from torch.nn import functional as F
+
 from PIL import Image
 from torchvision import transforms
 
@@ -29,4 +31,10 @@ im_lr = transforms.Resize(64, interpolation=Image.NEAREST)(im_hr)
 im_hr = to_tensor(im_hr)
 im_lr = to_tensor(im_lr)
 
-to_img(model(im_lr, im_hr, 3, 1e-5)).save('images/{}_result.jpg'.format(args.task))
+A, b = model(im_lr, 3, 1e-5)
+_, _, h_hrx, w_hrx = im_hr.size()
+mean_A = F.upsample(A, (h_hrx, w_hrx), mode='bilinear')
+mean_b = F.upsample(b, (h_hrx, w_hrx), mode='bilinear')
+y = torch.clamp(mean_A*im_hr+mean_b, 0, 1)
+
+to_img(y).save('images/{}_result.jpg'.format(args.task))

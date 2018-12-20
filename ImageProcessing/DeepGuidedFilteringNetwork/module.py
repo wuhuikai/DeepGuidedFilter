@@ -49,8 +49,8 @@ class DeepGuidedFilter(torch.jit.ScriptModule):
         self.gf = FastGuidedFilter()
 
     @torch.jit.script_method
-    def forward(self, x_lr:torch.Tensor, x_hr:torch.Tensor, radius:int=1, eps:float=1e-8):
-        return self.gf(x_lr, self.lr(x_lr), x_hr, radius, eps).clamp(0, 1)
+    def forward(self, x_lr:torch.Tensor, radius:int=1, eps:float=1e-8):
+        return self.gf(x_lr, self.lr(x_lr), radius, eps)
 
     def init_lr(self, path):
         self.lr.load_state_dict(torch.load(path))
