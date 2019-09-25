@@ -1,7 +1,4 @@
-tqdm == 4.19.4
-numpy == 1.14.0
+tqdm == 4.36.1
 docopt == 0.6.2
-Pillow == 4.3.0
-torchvision == 0.1.9
-guided_filter_pytorch
-scikit_image == 0.13.1
+guided_filter_pytorch == 1.1.1
+scikit_image == 0.15.0
