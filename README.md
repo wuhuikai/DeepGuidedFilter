@@ -2,37 +2,37 @@
 [[Project]](http://wuhuikai.me/DeepGuidedFilterProject)    [[Paper]](http://wuhuikai.me/DeepGuidedFilterProject/deep_guided_filter.pdf)    [[arXiv]](https://arxiv.org/abs/1803.05619)    [[Demo]](http://wuhuikai.me/DeepGuidedFilterProject#demo)    [[Home]](http://wuhuikai.me)
   
 Official implementation of **Fast End-to-End Trainable Guided Filter**.     
-**Faster**, **Better** and **Lighter**  for image processing and dense prediction. 
+**Faster**, **Better** and **Lighter** for pixel-wise image prediction.
 
 ## Overview
 ![](images/results.jpg)
 
-**DeepGuidedFilter** is the author's implementation of the deep learning building block for joint upsampling described in:  
+**DeepGuidedFilter** is the author's implementation of:
 
 **Fast End-to-End Trainable Guided Filter**     
 Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang    
 CVPR 2018
 
-Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs **10-100** times faster. 
+With our method, FCNs can run **10-100** times faster w/o performance drop.
 
 Contact: Hui-Kai Wu (huikaiwu@icloud.com)
 
-## Try it on an image!
-### Prepare Environment
+## Get Started
+### Prepare Environment [Python>=3.6]
 1. Download source code from GitHub.
     ```sh
     git clone https://github.com/wuhuikai/DeepGuidedFilter
     
     cd DeepGuidedFilter && git checkout release
     ```
-2. Install dependencies (PyTorch version).
+2. Install dependencies.
     ```sh
     conda install opencv
-    conda install pytorch=0.2.0 cuda80 -c soumith
+    conda install pytorch=1.1 torchvision=0.2 cudatoolkit=9.0 -c pytorch
     
     pip install -r requirements.txt 
     ```
-3. (**Optional**) Install dependencies for MonoDepth (Tensorflow version).
+3. (**Optional**) Install dependencies for MonoDepth.
     ```sh
     cd ComputerVision/MonoDepth
     
@@ -81,13 +81,13 @@ Note:
 Note:
 1. Result is in `../../images`.
 2. See [Here](ComputerVision/Saliency_DSS/#try_on_an_image) or `python predict.py -h` for more details.
-#### Monocular Depth Estimation (TensorFlow version)
+#### Monocular Depth Estimation
 1. Enter the directory.
     ```sh
     cd ComputerVision/MonoDepth
     ```
 2. **Download** and **Unzip** Pretrained Model [[Google Drive](https://drive.google.com/file/d/1dKDYRtZPahoFJZ5ZJNilgHEvT6gG4SC6/view?usp=sharing)|[BaiduYunPan](https://pan.baidu.com/s/1-GkMaRAVym8UEmQ6ia5cHw)]
-2. Run on an Image !
+2. Run on an Image
     ```sh
     python monodepth_simple.py --image_path ../../images/depth.jpg --checkpoint_path [MODEL_PATH] --guided_filter
     ```
@@ -116,6 +116,11 @@ Note:
     from guided_filter_pytorch.guided_filter import GuidedFilter
     
     hr_y = GuidedFilter(r, eps)(hr_x, init_hr_y)
+    ``` 
+    ```
+    from guided_filter_pytorch.guided_filter import ConvGuidedFilter
+    
+    hr_y = ConvGuidedFilter(r, norm)(lr_x, lr_y, hr_x)
     ``` 
 * Tensorflow Version
     ```python

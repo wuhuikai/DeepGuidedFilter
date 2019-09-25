@@ -2,7 +2,7 @@
 [[Project]](http://wuhuikai.me/DeepGuidedFilterProject)    [[Paper]](http://wuhuikai.me/DeepGuidedFilterProject/deep_guided_filter.pdf)    [[arXiv]](https://arxiv.org/abs/1803.05619)    [[Demo]](http://wuhuikai.me/DeepGuidedFilterProject#demo)    [[Home]](http://wuhuikai.me)
 
 Official implementation of **Fast End-to-End Trainable Guided Filter**.     
-**Faster**, **Better** and **Lighter**  for image processing and dense prediction.
+**Faster**, **Better** and **Lighter** for pixel-wise image prediction.
 
 ## Paper
 **Fast End-to-End Trainable Guided Filter**     
@@ -23,6 +23,11 @@ hr_y = FastGuidedFilter(r, eps)(lr_x, lr_y, hr_x)
 from guided_filter_pytorch.guided_filter import GuidedFilter
 
 hr_y = GuidedFilter(r, eps)(hr_x, init_hr_y)
+```
+```
+from guided_filter_pytorch.guided_filter import ConvGuidedFilter
+
+hr_y = ConvGuidedFilter(r, norm)(lr_x, lr_y, hr_x)
 ``` 
 ## Citation
 ```
