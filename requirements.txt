@@ -1,4 +1,4 @@
 tqdm == 4.36.1
 docopt == 0.6.2
-guided_filter_pytorch == 1.1.1
+guided_filter_pytorch == 3.7.5
 scikit_image == 0.15.0
