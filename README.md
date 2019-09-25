@@ -27,7 +27,7 @@ Contact: Hui-Kai Wu (huikaiwu@icloud.com)
     ```
 2. Install dependencies.
     ```sh
-    conda install opencv
+    conda install opencv=3.4
     conda install pytorch=1.1 torchvision=0.2 cudatoolkit=9.0 -c pytorch
     
     pip install -r requirements.txt 
@@ -138,19 +138,19 @@ Note:
 ```sh
 git checkout master
 
-conda install opencv
-conda install pytorch=0.2.0 cuda80 -c soumith
+conda install opencv=3.4
+conda install pytorch=1.1 torchvision=0.2 cudatoolkit=9.0 -c pytorch
     
 pip install -r requirements.txt
 
-# (Optional) For MonoDepth (TF Version).
+# (Optional) For MonoDepth
 pip install -r ComputerVision/MonoDepth/requirements.txt 
 ```
 ### Start to Train
 * [Image Processing](ImageProcessing/DeepGuidedFilteringNetwork)
 * [Semantic Segmentation with Deeplab-Resnet](ComputerVision/Deeplab-Resnet)
 * [Saliency Detection with DSS](ComputerVision/Saliency_DSS)
-* [Monocular Depth Estimation (TensorFlow version)](ComputerVision/MonoDepth)
+* [Monocular Depth Estimation](ComputerVision/MonoDepth)
 
 ## Citation
 ```
