@@ -4,7 +4,7 @@ Max F-measure: **91.75%** [Baseline: 90.61%]
 
 ## Try on an image!
 1. Download the pretrained model [[Google Drive](https://drive.google.com/open?id=1ZxbAAJw9BxCKj2e2QsBmCnjWLFlCGLf1)|[BaiduYunPan](https://pan.baidu.com/s/1pgOMh3V50lRa6slbIW_SKQ)].
-2. Try it now !
+2. Try it now!
     ```sh
     python predict.py --im_path [IM_PATH] \
                       --netG [MODEL_PATH] \
@@ -20,7 +20,7 @@ Max F-measure: **91.75%** [Baseline: 90.61%]
     python scripts/preprocess.py --data_path [MSRA-B_ROOT] --mode valid
     python scripts/preprocess.py --data_path [MSRA-B_ROOT] --mode test
     ```
-3. Start training !
+3. Start training!
     * **WITHOUT** Guided Filtering Layer
     ```sh
     python main.py --dataroot [MSRA-B_ROOT]/AB --cuda --experiment [EXP_NAME]
@@ -54,4 +54,4 @@ Max F-measure: **91.75%** [Baseline: 90.61%]
        [SalMetric_ROOT]/build/salmetric test.txt [WORKER_NUM]
        ```
 ## Acknowledgement
-A part of the code has been adapted from [DSS](https://github.com/Andrew-Qibin/DSS).
+A part of the code was adapted from [DSS](https://github.com/Andrew-Qibin/DSS).

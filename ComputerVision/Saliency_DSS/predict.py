@@ -46,27 +46,30 @@ if opt.cuda:
         dgf = dgf.cuda()
 
 img = transforms.ToTensor()(Image.open(opt.im_path).convert('RGB'))
-if opt.cuda:
-    img = img.cuda()
 real_x = img.unsqueeze(0)
 real_A = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(img)
 real_A.unsqueeze_(0)
-input_G = Variable(real_A, volatile=True)
-input_x = Variable(real_x, volatile=True)
+input_G = Variable(real_A)
+input_x = Variable(real_x)
 
-fake_B, side_out1, side_out2, side_out3, side_out4, side_out5, side_out6 = netG(input_G, input_x)
-if opt.dgf:
-    input_x = input_x.sum(1, keepdim=True)
-    image_B = dgf(input_x, fake_B).clamp(0, 1)
-else:
-    image_B = fake_B
+if opt.cuda:
+    input_G = input_G.cuda()
+    input_x = input_x.cuda()
 
-image_B = image_B.data.cpu().mul(255).numpy().squeeze().astype(np.uint8)
-if opt.thres > 0:
-    image_B[image_B >= opt.thres] = 255
-    image_B[image_B <= opt.thres] = 0
+with torch.no_grad():
+    fake_B, side_out1, side_out2, side_out3, side_out4, side_out5, side_out6 = netG(input_G, input_x)
+    if opt.dgf:
+        input_x = input_x.sum(1, keepdim=True)
+        image_B = dgf(input_x, fake_B).clamp(0, 1)
+    else:
+        image_B = fake_B
 
-output_directory = os.path.dirname(opt.im_path)
-output_name = os.path.splitext(os.path.basename(opt.im_path))[0]
-save_path = os.path.join(output_directory, '{}_labels.png'.format(output_name))
-imsave(save_path, image_B)
+    image_B = image_B.data.cpu().mul(255).numpy().squeeze().astype(np.uint8)
+    if opt.thres > 0:
+        image_B[image_B >= opt.thres] = 255
+        image_B[image_B <= opt.thres] = 0
+
+    output_directory = os.path.dirname(opt.im_path)
+    output_name = os.path.splitext(os.path.basename(opt.im_path))[0]
+    save_path = os.path.join(output_directory, '{}_labels.png'.format(output_name))
+    imsave(save_path, image_B)
