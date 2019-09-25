@@ -191,7 +191,7 @@ class MS_Deeplab(nn.Module):
             g = self.guided_map_relu1(self.guided_map_conv1(im))
             g = self.guided_map_conv2(g)
 
-            output = F.upsample(output, im.size()[2:], mode='bilinear')
+            output = F.interpolate(output, im.size()[2:], mode='bilinear', align_corners=True)
 
             output = self.guided_filter(g, output)
 

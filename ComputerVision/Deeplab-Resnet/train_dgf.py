@@ -119,9 +119,9 @@ def loss_calc(out, label, gpu0):
     # label shape h x w x 1 x batch_size  -> batch_size x 1 x h x w
     label = torch.from_numpy(label).long()
     label = Variable(label).cuda(gpu0)
-    out = nn.LogSoftmax()(out)
+    out = nn.LogSoftmax(dim=1)(out)
 
-    return nn.NLLLoss2d()(out, label)
+    return nn.NLLLoss()(out, label)
 
 
 def lr_poly(base_lr, iter, max_iter, power):

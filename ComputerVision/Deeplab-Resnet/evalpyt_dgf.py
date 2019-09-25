@@ -73,10 +73,10 @@ def main():
             inputs = [np.zeros((513, 513, 3))]
             inputs[0][:img.shape[0], :img.shape[1], :] = img
 
-        output = model(*[Variable(torch.from_numpy(i[np.newaxis, :].transpose(0, 3, 1, 2)).float(),
-                                  volatile=True).cuda(gpu0) for i in inputs])
+        with torch.no_grad():
+            output = model(*[torch.from_numpy(i[np.newaxis, :].transpose(0, 3, 1, 2)).float().cuda(gpu0) for i in inputs])
         if not args['--dgf']:
-            interp = nn.Upsample(size=(513, 513), mode='bilinear')
+            interp = nn.Upsample(size=(513, 513), mode='bilinear', align_corners=True)
             output = interp(output)
             output = output[:, :, :img.shape[0], :img.shape[1]]
 

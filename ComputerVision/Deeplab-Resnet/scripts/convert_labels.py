@@ -63,7 +63,7 @@ def main():
             img = imread(img_name)
 
             if (len(img.shape) > 2):
-                img = convert_from_color_segmentation(img)
+                img = convert_from_color_segmentation(img[:,:,:3])
                 imsave(os.path.join(path_converted, img_base_name) + '.png', img)
             else:
                 print(img_name,  "is not composed of three dimensions, therefore "

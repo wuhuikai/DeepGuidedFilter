@@ -44,8 +44,8 @@ def main():
     img[:, :, 1] = img[:, :, 1] - 116.669
     img[:, :, 2] = img[:, :, 2] - 122.675
 
-    output = model(*[Variable(torch.from_numpy(i[np.newaxis, :].transpose(0, 3, 1, 2)).float(),
-                              volatile=True).cuda(gpu0) for i in  [img, img_original]])
+    with torch.no_grad():
+        output = model(*[torch.from_numpy(i[np.newaxis, :].transpose(0, 3, 1, 2)).float().cuda(gpu0) for i in  [img, img_original]])
     output = output.cpu().data[0].numpy().transpose(1, 2, 0)
     output = np.argmax(output, axis=2)
 
