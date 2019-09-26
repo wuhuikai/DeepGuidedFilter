@@ -140,7 +140,8 @@ git checkout master
 
 conda install opencv=3.4
 conda install pytorch=1.1 torchvision=0.2 cudatoolkit=9.0 -c pytorch
-    
+
+pip uninstall Pillow
 pip install -r requirements.txt
 
 # (Optional) For MonoDepth
