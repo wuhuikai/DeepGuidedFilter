@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from torch.nn import init
 
-from guided_filter_pytorch.guided_filter import FastGuidedFilter
+from guided_filter_pytorch.guided_filter import FastGuidedFilter, ConvGuidedFilter
 
 def weights_init_identity(m):
     classname = m.__class__.__name__
@@ -11,7 +11,7 @@ def weights_init_identity(m):
         n_out, n_in, h, w = m.weight.data.size()
         # Last Layer
         if n_out < n_in:
-            init.xavier_uniform(m.weight.data)
+            init.xavier_uniform_(m.weight.data)
             return
 
         # Except Last Layer
@@ -21,8 +21,8 @@ def weights_init_identity(m):
             m.weight.data[i, i, ch, cw] = 1.0
 
     elif classname.find('BatchNorm2d') != -1:
-        init.constant(m.weight.data, 1.0)
-        init.constant(m.bias.data,   0.0)
+        init.constant_(m.weight.data, 1.0)
+        init.constant_(m.bias.data,   0.0)
 
 class AdaptiveNorm(nn.Module):
     def __init__(self, n):
@@ -88,3 +88,30 @@ class DeepGuidedFilterAdvanced(DeepGuidedFilter):
 
     def forward(self, x_lr, x_hr):
         return self.gf(self.guided_map(x_lr), self.lr(x_lr), self.guided_map(x_hr))
+
+class DeepGuidedFilterConvGF(nn.Module):
+    def __init__(self, radius=1, layer=5):
+        super(DeepGuidedFilterConvGF, self).__init__()
+        self.lr = build_lr_net(layer=layer)
+        self.gf = ConvGuidedFilter(radius, norm=AdaptiveNorm)
+
+    def forward(self, x_lr, x_hr):
+        return self.gf(x_lr, self.lr(x_lr), x_hr).clamp(0, 1)
+
+    def init_lr(self, path):
+        self.lr.load_state_dict(torch.load(path))
+
+class DeepGuidedFilterGuidedMapConvGF(DeepGuidedFilterConvGF):
+    def __init__(self, radius=1, dilation=0, c=16, layer=5):
+        super(DeepGuidedFilterGuidedMapConvGF, self).__init__(radius, layer)
+
+        self.guided_map = nn.Sequential(
+            nn.Conv2d(3, c, 1, bias=False) if dilation==0 else \
+                nn.Conv2d(3, c, 3, padding=dilation, dilation=dilation, bias=False),
+            AdaptiveNorm(c),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Conv2d(c, 3, 1)
+        )
+
+    def forward(self, x_lr, x_hr):
+        return self.gf(self.guided_map(x_lr), self.lr(x_lr), self.guided_map(x_hr)).clamp(0, 1)

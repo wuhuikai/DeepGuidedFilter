@@ -12,7 +12,7 @@ class VisUtils(object):
             os.makedirs(self.stat_dir)
 
         self.e_bar = tqdm(total=n_epoch, desc='#Epoch')
-        self.i_bar = tqdm(total=n_iter,  desc='  #Iter')
+        self.i_bar = tqdm(total=n_iter,  desc='  #Iter', leave=False)
 
         self.writer = SummaryWriter(log_dir=os.path.join(log_dir, name))
 
@@ -20,7 +20,7 @@ class VisUtils(object):
         self.e_bar.close()
         self.i_bar.close()
         self.e_bar = tqdm(total=n_epoch, desc='#Epoch')
-        self.i_bar = tqdm(total=n_iter,  desc='  #Iter')
+        self.i_bar = tqdm(total=n_iter,  desc='  #Iter', leave=False)
 
 
     def update(self, post_fix):
@@ -31,7 +31,7 @@ class VisUtils(object):
         self.e_bar.update()
 
         self.i_bar.close()
-        self.i_bar = tqdm(total=self.n_iter, desc='  #Iter')
+        self.i_bar = tqdm(total=self.n_iter, desc='  #Iter', leave=False)
 
     def close(self):
         self.writer.export_scalars_to_json(os.path.join(self.stat_dir, 'scalars.json'))

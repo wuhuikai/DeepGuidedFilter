@@ -3,7 +3,7 @@ import argparse
 
 from torch.autograd import Variable
 
-from module import DeepGuidedFilter, DeepGuidedFilterAdvanced
+from module import DeepGuidedFilter, DeepGuidedFilterAdvanced, DeepGuidedFilterConvGF, DeepGuidedFilterGuidedMapConvGF
 
 from test_base import *
 
@@ -24,11 +24,17 @@ if args.model in ['guided_filter', 'deep_guided_filter']:
     model = DeepGuidedFilter()
 elif args.model == 'deep_guided_filter_advanced':
     model = DeepGuidedFilterAdvanced()
+elif args.model == 'deep_conv_guided_filter':
+    model = DeepGuidedFilterConvGF()
+elif args.model == 'deep_conv_guided_filter_adv':
+    model = DeepGuidedFilterGuidedMapConvGF()
 else:
     print('Not a valid model!')
     exit(-1)
 
-if args.model in ['deep_guided_filter', 'deep_guided_filter_advanced']:
+if args.model == 'guided_filter':
+    model.init_lr(os.path.join(config.MODEL_PATH, config.TASK, 'LR', 'snapshots', 'net_latest.pth'))
+else:
     model.load_state_dict(
         torch.load(
             os.path.join(config.MODEL_PATH,
@@ -38,11 +44,6 @@ if args.model in ['deep_guided_filter', 'deep_guided_filter_advanced']:
                          'net_latest.pth')
         )
     )
-elif args.model == 'guided_filter':
-    model.init_lr(os.path.join(config.MODEL_PATH, config.TASK, 'LR', 'snapshots', 'net_latest.pth'))
-else:
-    print('Not a valid model!')
-    exit(-1)
 
 config.model = model
 

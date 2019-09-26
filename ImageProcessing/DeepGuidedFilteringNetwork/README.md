@@ -90,47 +90,54 @@
 * Option 1: Train from scratch
     ```sh
     python train_hr.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
-                       --name [HR|HR_AD] \
-                       --model [deep_guided_filter|deep_guided_filter_advanced]
+                       --name [HR|HR_AD|CONV_HR|CONV_HR_AD] \
+                       --model [deep_guided_filter|deep_guided_filter_advanced|deep_conv_guided_filter|deep_conv_guided_filter_adv]
     ```
 * Option 2: Train with low-resolution data + Finetune
     ```sh
     python train_lr.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps]
     
     python train_hr_finetune.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
-                                --name [HR_FT|HR_AD_FT] \
-                                --model [deep_guided_filter|deep_guided_filter_advanced]
+                                --name [HR_FT|HR_AD_FT|CONV_HR_FT|CONV_HR_AD_FT] \
+                                --model [deep_guided_filter|deep_guided_filter_advanced|deep_conv_guided_filter|deep_conv_guided_filter_adv]
     ```
 **NOTE**:
 * deep_guided_filter: **DGF<sub>b</sub>**
 * deep_guided_filter_advanced: **DGF**
+* deep_conv_guided_filter: **DGF<sub>b</sub><sup>c</sup>**
+* deep_conv_guided_filter_adv: **DGF<sup>c</sup>**
 
 ## Evaluate
 ```sh
 python test_hr.py --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
-                  --name [HR|HR_AD|HR_FT|HR_AD_FT|HR_PP] \
-                  --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced]
+                  --name [LR|HR|HR_AD|CONV_HR|CONV_HR_AD|HR_FT|HR_AD_FT|CONV_HR_FT|CONV_HR_AD_FT] \
+                  --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced|deep_conv_guided_filter|deep_conv_guided_filter_adv]
 ```
 **NOTE**:
 * guided_filter: **DGF<sub>s</sub>**
 * deep_guided_filter: **DGF<sub>b</sub>**
 * deep_guided_filter_advanced: **DGF**
+* deep_conv_guided_filter: **DGF<sub>b</sub><sup>c</sup>**
+* deep_conv_guided_filter_adv: **DGF<sup>c</sup>**
 
 ## Running Time
 ```sh
-python test_time.py --model_id [0|1|2]
+python test_time.py --model_id [0|1|2|3|4|5]
 ```
 **NOTE**:
 * 0: **DGF<sub>b</sub>**
 * 1: GuidedFilteringLayer
 * 2: **DGF**
+* 3: ConvGuidedFilteringLayer
+* 4: **DGF<sub>b</sub><sup>c</sup>**
+* 5: **DGF<sup>c</sup>**
 
 ## Predict
 ```sh
 python predict.py  --task [l0_smooth|multi_scale_detail_manipulation|style_transfer|non_local_dehazing|auto_ps] \
                   [--img_path IMG_PATH | --img_list IMG_LIST] \
                    --save_folder SAVE_FOLDER \
-                   --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced] \
+                   --model [guided_filter|deep_guided_filter|deep_guided_filter_advanced|deep_conv_guided_filter|deep_conv_guided_filter_adv] \
                    --low_size 64 \
                    --gpu 0 \
                   [--gray]
@@ -140,7 +147,9 @@ python predict.py  --task [l0_smooth|multi_scale_detail_manipulation|style_trans
     * guided_filter: **DGF<sub>s</sub>**
     * deep_guided_filter: **DGF<sub>b</sub>**
     * deep_guided_filter_advanced: **DGF**
+    * deep_conv_guided_filter: **DGF<sub>b</sub><sup>c</sup>**
+    * deep_conv_guided_filter_adv: **DGF<sup>c</sup>**
 * --gray: It's better to generate gray images for style transfer.
 
 ## Acknowledgement
-A part of the code has been adapted from [FastImageProcessing](https://github.com/CQFIO/FastImageProcessing).
+A part of the code was adapted from [FastImageProcessing](https://github.com/CQFIO/FastImageProcessing).

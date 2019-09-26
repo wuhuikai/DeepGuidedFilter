@@ -95,7 +95,7 @@ def run(config, keep_vis=False):
             ##################### PLOT/SHOW ######################
             global_step = epoch*len(train_loader)+idx
 
-            loss = loss.data.cpu()[0] * 255 * 255
+            loss = loss.item() * 255 * 255
             total_loss += loss
 
             config.vis.writer.add_scalars('loss', {

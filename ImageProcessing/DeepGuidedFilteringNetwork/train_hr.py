@@ -3,7 +3,7 @@ import argparse
 
 from train_base import *
 
-from module import DeepGuidedFilter, DeepGuidedFilterAdvanced
+from module import DeepGuidedFilter, DeepGuidedFilterAdvanced, DeepGuidedFilterConvGF, DeepGuidedFilterGuidedMapConvGF
 
 parser = argparse.ArgumentParser(description='Train Deep Guided Filtering Networks')
 parser.add_argument('--task',  type=str, default='l0_smooth',          help='TASK')
@@ -23,6 +23,10 @@ if args.model == 'deep_guided_filter':
     config.model = DeepGuidedFilter()
 elif args.model == 'deep_guided_filter_advanced':
     config.model = DeepGuidedFilterAdvanced()
+elif args.model == 'deep_conv_guided_filter':
+    config.model = DeepGuidedFilterConvGF()
+elif args.model == 'deep_conv_guided_filter_adv':
+    config.model = DeepGuidedFilterGuidedMapConvGF()
 else:
     print('Not a valid model!')
     exit(-1)

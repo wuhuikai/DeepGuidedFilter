@@ -5,7 +5,7 @@ import argparse
 import torch
 from torch.autograd import Variable
 
-from module import DeepGuidedFilter, DeepGuidedFilterAdvanced, FastGuidedFilter
+from module import AdaptiveNorm, DeepGuidedFilter, DeepGuidedFilterAdvanced, FastGuidedFilter, ConvGuidedFilter, DeepGuidedFilterConvGF, DeepGuidedFilterGuidedMapConvGF
 
 parser = argparse.ArgumentParser(description='Runing time')
 parser.add_argument('--gpu',       type=int, default=   0, help='GPU')
@@ -27,6 +27,9 @@ model_forward = [
     ('deep_guided_filter', (DeepGuidedFilter(), lambda model, imgs: model(imgs[0], imgs[1]))),
     ('deep_guided_filter_layer', (FastGuidedFilter(1, 1e-8), lambda model, imgs: model(imgs[0], imgs[0], imgs[1]))),
     ('deep_guided_filter_advanced', (DeepGuidedFilterAdvanced(), lambda model, imgs: model(imgs[0], imgs[1]))),
+    ('deep_conv_guided_filter_layer', (ConvGuidedFilter(1, AdaptiveNorm), lambda model, imgs: model(imgs[0], imgs[0], imgs[1]))),
+    ('deep_conv_guided_filter', (DeepGuidedFilterConvGF(), lambda model, imgs: model(imgs[0], imgs[1]))),
+    ('deep_conv_guided_filter_adv', (DeepGuidedFilterGuidedMapConvGF(), lambda model, imgs: model(imgs[0], imgs[1])))
 ]
 
 # mkdir

@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from dataset import PreSuDataset
 from utils import tensor_to_img, calc_metric, Config
-from module import DeepGuidedFilter, DeepGuidedFilterAdvanced
+from module import DeepGuidedFilter, DeepGuidedFilterAdvanced, DeepGuidedFilterConvGF, DeepGuidedFilterGuidedMapConvGF
 
 from skimage.io import imsave
 
@@ -43,22 +43,25 @@ if args.model in ['guided_filter', 'deep_guided_filter']:
     model = DeepGuidedFilter()
 elif args.model == 'deep_guided_filter_advanced':
     model = DeepGuidedFilterAdvanced()
+elif args.model == 'deep_conv_guided_filter':
+    model = DeepGuidedFilterConvGF()
+elif args.model == 'deep_conv_guided_filter_adv':
+    model = DeepGuidedFilterGuidedMapConvGF()
 else:
     print('Not a valid model!')
     exit(-1)
 
 model2name = {'guided_filter': 'lr',
               'deep_guided_filter': 'hr',
-              'deep_guided_filter_advanced': 'hr_ad'}
+              'deep_guided_filter_advanced': 'hr_ad',
+              'deep_conv_guided_filter': 'conv_hr',
+              'deep_conv_guided_filter_adv': 'conv_hr_ad'}
 model_path = os.path.join('models', args.task, '{}_net_latest.pth'.format(model2name[args.model]))
 
-if args.model in ['deep_guided_filter', 'deep_guided_filter_advanced']:
-    model.load_state_dict(torch.load(model_path))
-elif args.model == 'guided_filter':
+if args.model == 'guided_filter':
     model.init_lr(model_path)
 else:
-    print('Not a valid model!')
-    exit(-1)
+    model.load_state_dict(torch.load(model_path))
 
 # data set
 test_data = PreSuDataset(img_list, low_size=args.low_size)
