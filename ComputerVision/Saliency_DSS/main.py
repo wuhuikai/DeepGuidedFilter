@@ -122,9 +122,6 @@ real_A = torch.FloatTensor()
 real_x = torch.FloatTensor()
 if opt.cuda:
     netG.cuda()
-    real_B = real_B.cuda()
-    real_A = real_A.cuda()
-    real_x = real_x.cuda()
 
 # setup optimizer
 optimizerG = optim.RMSprop(netG.parameters(), lr=opt.lrG)
@@ -136,9 +133,6 @@ for epoch in range(opt.niter):
     schedulerG.step()
 
     for idx, (data, _) in enumerate(data_iter):
-        if opt.cuda:
-            data = data.cuda()
-
         w = data.size(3) // 2
         h = data.size(2)
         real_B.resize_(data.size(0), 1, h, w).copy_(data[:, :1, :, w:])
@@ -147,8 +141,12 @@ for epoch in range(opt.niter):
         real_A.unsqueeze_(0)
 
         real_x.resize_(1, 3, h, w).copy_(data[:1, :3, :, 0:w])
-
         input_G = Variable(real_A)
+        if opt.cuda:
+            real_x = real_x.cuda()
+            real_B = real_B.cuda()
+            input_G = input_G.cuda()
+
         fake_B, side1, side2, side3, side4, side5, side6 = netG(input_G, Variable(real_x))
 
         errG_bce = criterion(fake_B, Variable(real_B))
@@ -160,6 +158,6 @@ for epoch in range(opt.niter):
         gen_iterations += 1
 
         print('[%d/%d][%d/%d]  Loss_bce %f'
-              % (epoch, opt.niter, idx, len(dataloader), errG_bce.data[0]))
+              % (epoch, opt.niter, idx, len(dataloader), errG_bce.item()))
         if gen_iterations % 2000 == 0:
             torch.save(netG.state_dict(), '{0}/bfn1_netG_iter_{1}.pth'.format(opt.experiment, gen_iterations))
