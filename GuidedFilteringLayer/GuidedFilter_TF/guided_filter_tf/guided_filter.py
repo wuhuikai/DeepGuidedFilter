@@ -99,8 +99,8 @@ def fast_guided_filter(lr_x, lr_y, hr_x, r, eps=1e-8, nhwc=False):
     b    = tf.transpose(b,    [0, 2, 3, 1])
     hr_x = tf.transpose(hr_x, [0, 2, 3, 1])
 
-    mean_A = tf.image.resize_images(A, hr_x_shape[2:])
-    mean_b = tf.image.resize_images(b, hr_x_shape[2:])
+    mean_A = tf.image.resize(A, hr_x_shape[2:])
+    mean_b = tf.image.resize(b, hr_x_shape[2:])
 
     output = mean_A * hr_x + mean_b
 
